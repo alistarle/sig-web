@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Tableau de bord SIG</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -62,37 +62,59 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+
+            table {
+                border-collapse: collapse;
+            }
+
+            table td, table th{
+                border-left: 1px solid #000;
+                border-right: 1px solid #000;
+                padding: 0 5px;
+            }
+
+            table td:first-child, table th:first-child{
+                border-left: none;
+            }
+
+            table td:last-child, table th:last-child{
+                border-right: none;
+            }
         </style>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @if (Auth::check())
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ url('/login') }}">Login</a>
-                        <a href="{{ url('/register') }}">Register</a>
-                    @endif
-                </div>
-            @endif
-
             <div class="content">
                 <div class="title m-b-md">
-                    Jean-Michel
+                    Liste des devices
                 </div>
-
-		<div class="links">
-		    <a href="https://www.linkedin.com/in/jean-michel-couvreur-71119824" target="_blank">"L'homme qui murmurait à l'oreille des Chapka"</a>
-		</div>
-
-                <!-- <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div> -->
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            @foreach($hunts as $hunt)
+                                <th>{{ $hunt->name }}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($devices as $device)
+                            <tr><td>{{$device->model}}<small> ( {{ \Carbon\Carbon::parse($device->created_at)->diffForHumans() }} ) </small></td>
+                                @foreach($hunts as $hunt)
+                                    @if($device->hunts->contains($hunt))
+                                        <td>V</td>
+                                    @elseif($device->hunt == $hunt)
+                                        <td>{{ $device->step }}</td>
+                                    @else
+                                        <td>X</td>
+                                    @endif
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
             </div>
         </div>
     </body>
